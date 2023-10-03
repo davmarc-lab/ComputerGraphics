@@ -44,12 +44,12 @@ void build_circle(float cx, float cy, float rx, float ry, Point *circle)
 	for (int i = 0; i <= nPoints; i++)
 	{
 		thetai = i * step;
-		circle[cont].x = cx + cos(thetai) * rx;
-		circle[cont].y = cy + sin(thetai) * ry;
+		circle[cont].x = cx + 3 * sin(thetai) * rx;
+		circle[cont].y = cy + (0.5 - cos(2 * thetai) - cos(thetai)) * ry;
 		circle[cont].z = 0.0;
-		circle[cont].r = 0.0;
+		circle[cont].r = 1.0;
 		circle[cont].g = 1.0;
-		circle[cont].b = 0.0;
+		circle[cont].b = 1.0;
 		circle[cont].a = 1.0;
 		cont++;
 	}
@@ -69,7 +69,7 @@ void gestisci_shader(void)
 
 void INIT_VAO(void)
 {
-	build_circle(0, 0, 0.5, 0.5, vertices);
+	build_circle(0, 0, 0.25, 0.25, vertices);
 	// Genero un VAO
 	glGenVertexArrays(1, &VAO);
 	// Ne faccio il bind (lo collego, lo attivo)
@@ -90,7 +90,7 @@ void INIT_VAO(void)
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void *)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	glClearColor(1.0, 0.0, 0, 1.0);
+	glClearColor(0.0, 0.0, 0, 1.0);
 }
 void drawScene(void)
 {
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
-	glutInitWindowSize(800, 800);
+	glutInitWindowSize(1000, 800);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Triangolo OpenGL");
 	glutDisplayFunc(drawScene);

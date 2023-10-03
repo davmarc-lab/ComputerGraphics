@@ -22,7 +22,7 @@ typedef struct
 	float x, y, z, r, g, b, a;
 } Point;
 
-int nPoints = 50;
+int nPoints = 90;
 // centerVertex + nTringles + lastVertex
 int nVertex = nPoints + 2;
 Point *vertices = new Point[nVertex];
@@ -44,13 +44,13 @@ void build_circle(float cx, float cy, float rx, float ry, Point *circle)
 	for (int i = 0; i <= nPoints; i++)
 	{
 		thetai = i * step;
-		circle[cont].x = cx + cos(thetai) * rx;
-		circle[cont].y = cy + sin(thetai) * ry;
+		circle[cont].x = cx + (sin(thetai) * exp(cos(thetai) - 2 * cos(4 * thetai)) + pow(sin(thetai / 12), 5.0)) * rx;
+		circle[cont].y = cy + (cos(thetai) * exp(cos(thetai) - 2 * cos(4 * thetai)) + pow(sin(thetai / 12), 5.0)) * ry;
 		circle[cont].z = 0.0;
 		circle[cont].r = 0.0;
-		circle[cont].g = 1.0;
+		circle[cont].g = 0.0;
 		circle[cont].b = 0.0;
-		circle[cont].a = 1.0;
+		circle[cont].a = 0.5;
 		cont++;
 	}
 }
@@ -69,7 +69,7 @@ void gestisci_shader(void)
 
 void INIT_VAO(void)
 {
-	build_circle(0, 0, 0.5, 0.5, vertices);
+	build_circle(0, -0.5, 0.08, 0.1, vertices);
 	// Genero un VAO
 	glGenVertexArrays(1, &VAO);
 	// Ne faccio il bind (lo collego, lo attivo)
@@ -90,7 +90,7 @@ void INIT_VAO(void)
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void *)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	glClearColor(1.0, 0.0, 0, 1.0);
+	glClearColor(0.0, 1.0, 0, 1.0);
 }
 void drawScene(void)
 {
