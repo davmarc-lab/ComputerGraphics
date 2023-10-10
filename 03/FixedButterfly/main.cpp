@@ -75,7 +75,7 @@ void costruisci_farfalla(float cx, float cy, float raggiox, float raggioy, Figur
 		yy = cy + raggioy * (cos(t) * (exp(cos(t)) - 2 * cos(4 * t)) + pow(sin(t / 12), 5));
 		fig->vertici.push_back(vec3(xx, yy, 0.0));
 		// Colore
-		fig->colors.push_back(vec4(1.0, 0.0, 0.0, 1.0)); // Nota che la quarta componente corrisponde alla trasparenza del colore
+		fig->colors.push_back(vec4(0.0, 1.0, 1.0, 1.0)); // Nota che la quarta componente corrisponde alla trasparenza del colore
 	}
 
 	fig->nv = fig->vertici.size();
