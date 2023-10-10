@@ -33,7 +33,7 @@ GLuint MatProj, MatModel;
 
 int width = 1280, height = 720;
 float scaling = 1.0f;
-float dx = 0, dy = 0, w = 0;
+float dx = 0, dy = 0, w = 0, w2 = 0;
 
 void crea_VAO_Vector(Figura *fig)
 {
@@ -137,6 +137,8 @@ void INIT_VAO(void)
 void drawScene(void)
 {
 	int k;
+	float px = 400 + 200 * cos(w2);
+	float py = 400 + 200 * sin(w2);
 
 	glClearColor(0.0, 0.0, 0.5, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -145,24 +147,21 @@ void drawScene(void)
 		if (k == 0)
 		{
 			scene[k].Model = mat4(1.0);
-			scene[k].Model = translate(scene[k].Model, vec3(1000.0 + dx, 350.0 + dy, 0.0));
-			scene[k].Model = scale(scene[k].Model, vec3(200.0 * scaling, 200.0 * scaling, 1.0));
+			// scene[k].Model = translate(scene[k].Model, vec3(1000.0 + dx, 350.0 + dy, 0.0));
+			scene[k].Model = translate(scene[k].Model, vec3(px, py, 0.0));
+			scene[k].Model = scale(scene[k].Model, vec3(300.0 * scaling, 300.0 * scaling, 1.0));
 			scene[k].Model = rotate(scene[k].Model, radians(w), vec3(0, 0, 1));
-
-			glUniformMatrix4fv(MatProj, 1, GL_FALSE, value_ptr(Projection));
-			glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(scene[k].Model));
 		}
 		else if (k == 1)
 		{
 			scene[k].Model = mat4(1.0);
-			scene[k].Model = translate(scene[k].Model, vec3(300.0, 400.0, 0.0));
+			scene[k].Model = translate(scene[k].Model, vec3(400.0, 400.0, 0.0));
 			scene[k].Model = scale(scene[k].Model, vec3(100.0 * scaling, 100.0 * scaling, 1.0));
-
-			glUniformMatrix4fv(MatProj, 1, GL_FALSE, value_ptr(Projection));
-			glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(scene[k].Model));
 		}
 
 		glBindVertexArray(scene[k].VAO);
+		glUniformMatrix4fv(MatProj, 1, GL_FALSE, value_ptr(Projection));
+		glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(scene[k].Model));
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, scene[k].nv);
 		glBindVertexArray(0);
@@ -177,6 +176,13 @@ void updateScale(int value)
 		scaling = 1;
 
 	glutTimerFunc(100, updateScale, 0);
+	glutPostRedisplay();
+}
+
+void updateAngle(int value)
+{
+	w2 += 1;
+	glutTimerFunc(250, updateAngle, 0);
 	glutPostRedisplay();
 }
 
@@ -222,7 +228,8 @@ int main(int argc, char *argv[])
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Farfalla OpenGL");
 	glutDisplayFunc(drawScene);
-	glutKeyboardFunc(myKeyboard);
+	// glutKeyboardFunc(myKeyboard);
+	glutTimerFunc(250, updateAngle, 0);
 
 	glewExperimental = GL_TRUE;
 	glewInit();
