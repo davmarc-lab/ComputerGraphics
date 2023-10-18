@@ -18,5 +18,6 @@ public:
     int startWindow();
     void startRender();
     void startLoop();
+    void closeWindow();
     char *getWindowName();
 };

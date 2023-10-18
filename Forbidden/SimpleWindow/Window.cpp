@@ -46,11 +46,16 @@ void Window::startRender()
     glfwSetFramebufferSizeCallback(this->window, updateFrameBufferSize);
 }
 
+void Window::closeWindow()
+{
+    glfwSetWindowShouldClose(this->window, true);
+}
+
 void Window::processCloseInput()
 {
     if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
-        glfwSetWindowShouldClose(this->window, true);
+        this->closeWindow();
     }
 }
 
