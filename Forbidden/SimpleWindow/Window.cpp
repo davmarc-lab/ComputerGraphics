@@ -1,35 +1,18 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+#include "Window.hpp"
+
 using namespace std;
-
-class Window
-{
-private:
-    GLFWwindow *window;
-    int width;
-    int height;
-    string windowName;
-
-public:
-    Window(string windowName, int w, int h);
-    int startWindow();
-    void startRender();
-    void startLoop();
-    string getWindowName()
-    {
-        return windowName;
-    }
-};
 
 /*
     This constructor creates a window with width w and height h
 */
-Window::Window(string name, int w, int h)
+Window::Window(const char *name, int w, int h)
 {
-    width = w;
-    height = h;
-    windowName = name;
+    this->width = w;
+    this->height = h;
+    this->windowName = name;
 }
 
 /*
@@ -46,45 +29,51 @@ int Window::startWindow()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    window = glfwCreateWindow(width, height, windowName.c_str(), NULL, NULL);
-    if (window == NULL)
+    this->window = glfwCreateWindow(this->width, this->height, this->windowName, NULL, NULL);
+    if (this->window == NULL)
     {
         cout << "Failed to create GLFW window." << endl;
         glfwTerminate();
         return -1;
     }
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(this->window);
     return 0;
 }
 
 void Window::startRender()
 {
-    glViewport(0, 0, width, height);
-    glfwSetFramebufferSizeCallback(window, updateFrameBufferSize);
+    glViewport(0, 0, this->width, this->height);
+    glfwSetFramebufferSizeCallback(this->window, updateFrameBufferSize);
 }
 
-void processCloseInput(GLFWwindow *window)
+void Window::processCloseInput()
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
-        glfwSetWindowShouldClose(window, true);
+        glfwSetWindowShouldClose(this->window, true);
     }
 }
 
 void Window::startLoop()
 {
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(this->window))
     {
-        processCloseInput(window);
+        this->processCloseInput();
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(this->window);
         glfwPollEvents();
     }
 }
 
+char *Window::getWindowName()
+{
+    return (char *)this->windowName;
+}
+
 int main()
 {
-    Window w = Window("Ciao", 200, 200);
+    const char *name = "Hello OOP World";
+    Window w = Window(name, 500, 500);
     if (w.startWindow() < 0)
     {
         return -1;
