@@ -74,16 +74,3 @@ char *Window::getWindowName()
 {
     return (char *)this->windowName;
 }
-
-int main()
-{
-    const char *name = "Hello OOP World";
-    Window w = Window(name, 500, 500);
-    if (w.startWindow() < 0)
-    {
-        return -1;
-    }
-    w.startRender();
-    w.startLoop();
-    return 0;
-}
