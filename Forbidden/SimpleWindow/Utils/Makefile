@@ -1,16 +1,19 @@
-FLAGS = 
-LIBS = -lglfw -lGL -lX11 -lXrandr -lpthread -lXi
+FLAGS =
+LIBS = -lglfw -lGL -lGLEW -lX11 -lXrandr -lpthread -lXi
 
 all: main.exe
 
-main.exe: main.o window.o
-	g++ ${FLAGS} -o main.exe main.o window.o ${LIBS}
+main.exe: main.o utils.o window.o
+	g++ ${FLAGS} -o main.exe main.o utils.o window.o ${LIBS}
 
-main.o: mainWindow.cpp
-	gcc -c ${FLAGS} mainWindow.cpp -o main.o
+main.o: main.cpp
+	gcc ${FLAGS} -c main.cpp -o main.o
 
-window.o: Window.hpp
-	gcc -c ${FLAGS} Window.cpp -o window.o
+utils.o: Utils.cpp Utils.hpp
+	gcc ${FLAGS} -c Utils.cpp -o utils.o
+
+window.o: Window.cpp Window.hpp
+	gcc ${FLAGS} -c Window.cpp -o window.o
 
 .PHONY:	clean
 
