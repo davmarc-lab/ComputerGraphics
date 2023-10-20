@@ -11,7 +11,7 @@ Shape2D::Shape2D(int ntriangle, vector<vec3> vertex, vector<vec4> colors, mat4 m
     this->nvertex = this->vertex.size();
 }
 
-// Empty construcotr
+// Empty constructor
 Shape2D::Shape2D(int ntriangle)
 {
     this->ntriangle = ntriangle;

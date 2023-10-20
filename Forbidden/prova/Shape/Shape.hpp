@@ -47,4 +47,6 @@ public:
     void setNumTriangle(int n) { this->ntriangle = n; };
 
     vector<vec3> getVertexArray() { return this->vertex; };
+
+    GLuint getVertexArrayObject() { return this->vao; };
 };
