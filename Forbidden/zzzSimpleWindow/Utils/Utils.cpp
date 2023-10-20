@@ -1,6 +1,5 @@
 #include "Utils.hpp"
-#include <GLFW/glfw3.h>
-#include <iostream>
+#include "ShaderReader.hpp"
 
 using namespace std;
 
@@ -20,17 +19,25 @@ Shape2D::Shape2D(int ntriangle)
 
 /* Creates the VertexarrayObject and assign to the VertexBufferObject the vertex and colors values.
  */
-void Shape2D::createVertexArray(int n)
+void Shape2D::createVertexBuffer(int n)
 {
-    cout << this->vao << endl;
     /*
+    cout << this->vao << endl;
         Possibili problemi:
             - mancano le shader (ma non penso)
             - non trova la finestra e quindi non fa inizializzare il VAO
-    */
     glGenVertexArrays(n, &(this->vao));
     cout << "Pass 1" << endl;
-    glBindVertexArray(this->vao);
+    glBindVertexArray(this->vao); */
+
+    Shader shader = Shader("vertexShader.cs", "fragmentShader.fs");
+
+    glGenBuffers(n, &(this->vbo_g));
+    glBindBuffer(GL_ARRAY_BUFFER, this->vbo_g);
+    glBufferData(GL_ARRAY_BUFFER, this->vertex.size() * sizeof(vec3) , this->vertex.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) 0);
+    glEnableVertexAttribArray(0);
+
 }
 
 void Shape2D::drawShape2D(int n)

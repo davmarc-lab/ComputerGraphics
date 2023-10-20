@@ -1,4 +1,3 @@
-#include <GLFW/glfw3.h>
 #include <iostream>
 
 #include "Window.hpp"
@@ -59,18 +58,9 @@ void Window::processCloseInput()
     }
 }
 
-void Window::startLoop()
+void Window::createShader(string vertexShader, string fragmentShader)
 {
-    while (!glfwWindowShouldClose(this->window))
-    {
-        this->processCloseInput();
-
-        glfwSwapBuffers(this->window);
-        glfwPollEvents();
-    }
-}
-
-char *Window::getWindowName()
-{
-    return (char *)this->windowName;
+    // GLenum ErrorCheckValue = glGetError();
+    // int programId = ShaderReader::createProgram((char *)vertexShader.c_str(), (char *)fragmentShader.c_str());
+    // glUseProgram(programId);
 }

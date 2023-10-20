@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include <string.h>
+#include "../Lib.hpp"
 
 class Window
 {
@@ -11,13 +11,20 @@ private:
     int height;
     const char *windowName;
 
-    void processCloseInput();
-
 public:
     Window(const char *windowName, int w, int h);
+
     int startWindow();
+
     void startRender();
-    void startLoop();
+
     void closeWindow();
-    char *getWindowName();
+
+    void processCloseInput();
+
+    char *getWindowName() { return (char *)this->windowName; };
+
+    GLFWwindow *getWindow() { return this->window; };
+
+    void createShader(string vertexShader, string fragmentShader);
 };

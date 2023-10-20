@@ -1,7 +1,6 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -25,7 +24,7 @@ public:
 
     Shape2D(int ntriangle);
     // Creates the VAO of the Shape2D
-    void createVertexArray(int n);
+    void createVertexBuffer(int n);
     // Create all vertex and color VBO, enable them and draw in the windows
     void drawShape2D(int n);
     // Add element to vertex vector3
