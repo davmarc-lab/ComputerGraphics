@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <string.h>
 #include "Window.hpp"
 
 using namespace std;
@@ -46,23 +46,6 @@ int Window::startWindow()
         cout << "Failed to initialize GLAD" << endl;
         return -2;
     }
-
-    while (!glfwWindowShouldClose(this->window))
-    {
-        // input
-        // -----
-        this->processCloseInput();
-
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(this->window);
-        glfwPollEvents();
-    }
     return 0;
 }
 
@@ -80,17 +63,9 @@ void Window::processCloseInput()
     }
 }
 
-void Window::createShader(string vertexShader, string fragmentShader)
-{
-    // GLenum ErrorCheckValue = glGetError();
-    // int programId = ShaderReader::createProgram((char *)vertexShader.c_str(), (char *)fragmentShader.c_str());
-    // glUseProgram(programId);
-}
-
-int main()
-{
-    Window w = Window("Hello OOP WOrld", 800, 800);
-    w.startWindow();
-    glfwTerminate();
-    return 0;
-}
+// void Window::createShader(string vertexShader, string fragmentShader)
+// {
+//     // GLenum ErrorCheckValue = glGetError();
+//     // int programId = ShaderReader::createProgram((char *)vertexShader.c_str(), (char *)fragmentShader.c_str());
+//     // glUseProgram(programId);
+// }

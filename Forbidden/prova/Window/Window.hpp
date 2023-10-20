@@ -26,5 +26,5 @@ public:
 
     GLFWwindow *getWindow() { return this->window; };
 
-    void createShader(string vertexShader, string fragmentShader);
+    // void createShader(string vertexShader, string fragmentShader);
 };

@@ -17,22 +17,24 @@ Shape2D::Shape2D(int ntriangle)
     this->ntriangle = ntriangle;
 }
 
-void Shape2D::createVertexBuffer(int n)
+void Shape2D::createVertexArray()
 {
-    /*
-    cout << this->vao << endl;
-        Possibili problemi:
-            - mancano le shader (ma non penso)
-            - non trova la finestra e quindi non fa inizializzare il VAO
-    glGenVertexArrays(n, &(this->vao));
-    cout << "Pass 1" << endl;
-    glBindVertexArray(this->vao); */
+    glGenVertexArrays(1, &this->vao);
+    glBindVertexArray(this->vao);
 
-    glGenBuffers(n, &(this->vbo_g));
+    glGenBuffers(1, &this->vbo_g);
     glBindBuffer(GL_ARRAY_BUFFER, this->vbo_g);
     glBufferData(GL_ARRAY_BUFFER, this->vertex.size() * sizeof(vec3), this->vertex.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
     glEnableVertexAttribArray(0);
+
+    glGenBuffers(1, &this->vbo_c);
+    glBindBuffer(GL_ARRAY_BUFFER, this->vbo_c);
+    glBufferData(GL_ARRAY_BUFFER, this->colors.size() * sizeof(vec4), this->colors.data(), GL_STATIC_DRAW);
+    // position attribute
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void *)0);
+    glEnableVertexAttribArray(1);
 }
 
 void Shape2D::drawShape2D(int n)

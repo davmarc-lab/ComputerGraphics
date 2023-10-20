@@ -21,7 +21,7 @@ public:
     Shape2D(int ntriangle);
 
     // Creates the VAO of the Shape2D
-    void createVertexBuffer(int n);
+    void createVertexArray();
 
     // Create all vertex and color VBO, enable them and draw in the windows
     void drawShape2D(int n);
