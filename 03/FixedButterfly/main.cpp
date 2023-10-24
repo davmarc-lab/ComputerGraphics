@@ -157,6 +157,7 @@ void drawScene(void)
 			scene[k].Model = mat4(1.0);
 			scene[k].Model = translate(scene[k].Model, vec3(400.0, 400.0, 0.0));
 			scene[k].Model = scale(scene[k].Model, vec3(100.0 * scaling, 100.0 * scaling, 1.0));
+			scene[k].Model = rotate(scene[k].Model, radians(90.0f), vec3(1, 0, 0));
 		}
 
 		glBindVertexArray(scene[k].VAO);
