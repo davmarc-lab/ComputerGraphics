@@ -307,7 +307,7 @@ void reshape(int w, int h)
 	float AspectRatio_mondo = (float)(width) / (float)(height); // Rapporto larghezza altezza di tutto ci  che   nel mondo
 																// Se l'aspect ratio del mondo   diversa da quella della finestra devo mappare in modo diverso
 																// per evitare distorsioni del disegno
-	if (AspectRatio_mondo > w / h) // Se ridimensioniamo la larghezza della Viewport
+	if (AspectRatio_mondo > w / h)								// Se ridimensioniamo la larghezza della Viewport
 	{
 		glViewport(0, 0, w, w / AspectRatio_mondo);
 		w_update = (float)w;
