@@ -6,8 +6,6 @@
 class Rect
 {
 private:
-
-	GLuint vao;
 	GLuint vbo_g;
 	GLuint ebo;
 	vector<vec3> vertex;
@@ -18,17 +16,20 @@ private:
 
 	unsigned int indices[6] = {
 		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
+		1, 2, 3	 // second triangle
 	};
 
 	void buildVertex()
 	{
-		this->vertex.push_back(vec3(this->lenght / 2, this->lenght / 2, 0));		// top right corner
-		this->vertex.push_back(vec3(this->lenght / 2, -this->lenght / 2, 0));		// bottom right corner
-		this->vertex.push_back(vec3(-this->lenght / 2, -this->lenght / 2, 0));		// bottom left corner
-		this->vertex.push_back(vec3(-this->lenght / 2, this->lenght / 2, 0));		// top left corner
+		this->vertex.push_back(vec3(this->lenght / 2, this->lenght / 2, 0));   // top right corner
+		this->vertex.push_back(vec3(this->lenght / 2, -this->lenght / 2, 0));  // bottom right corner
+		this->vertex.push_back(vec3(-this->lenght / 2, -this->lenght / 2, 0)); // bottom left corner
+		this->vertex.push_back(vec3(-this->lenght / 2, this->lenght / 2, 0));  // top left corner
 	}
+
 public:
+	GLuint vao;
+
 	Rect(float cx, float cy, float lenght);
 
 	void createVertexArray();
@@ -37,7 +38,7 @@ public:
 
 	mat4 getModelMatrix() { return this->model; }
 
-        void setModelMatrix(mat4 mod) { this->model = mod; }
+	void setModelMatrix(mat4 mod) { this->model = mod; }
 
 	void scaleShape(vec3 mod) { this->model = scale(this->model, mod); }
 

@@ -30,16 +30,6 @@ void initWindowView(Shader shader)
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 }
 
-void buildRect(Shape2D *shape)
-{
-    shape->addElementVertex(vec3(-1, -1, 0));
-    shape->addElementVertex(vec3(1, -1, 0));
-    shape->addElementVertex(vec3(-1, 1, 0));
-    shape->addElementVertex(vec3(1, 1, 0));
-
-    shape->setVertexNum(4);
-}
-
 int main()
 {
     Window w = Window("Hello rect", WIDTH, HEIGHT);
@@ -47,21 +37,37 @@ int main()
     {
         Shader shader("resources/vertexShader.vs", "resources/fragmentShader.fs");
 
-        Rect r = Rect(0, 0, 1);
-        r.createVertexArray();
+        float vertices[] = {
+            // positions          // texture coords
+            0.5f, 0.5f, 0.0f,   // top right
+            0.5f, -0.5f, 0.0f,  // bottom right
+            -0.5f, -0.5f, 0.0f, // bottom left
+            -0.5f, 0.5f, 0.0f   // top left
+        };
+        unsigned int indices[] = {
+            0, 1, 3, // first triangle
+            1, 2, 3  // second triangle
+        };
+        unsigned int VBO, VAO, EBO;
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+        glGenBuffers(1, &EBO);
 
-        Shape2D shape = Shape2D(4);
-        buildRect(&shape);
-        Scene scene = Scene();
+        glBindVertexArray(VAO);
 
-        scene.addShape2dToScene(shape, GL_TRIANGLE_STRIP);
-        shape.setModelMatrix(mat4(1.0f));
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+        // position attribute
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+        glEnableVertexAttribArray(0);
 
         shader.use();
-        shape.setModelMatrix(translate(shape.getModelMatrix(), vec3(400, 400, 0.0)));
-        shape.setModelMatrix(scale(shape.getModelMatrix(), vec3(WIDTH, HEIGHT, 1)));
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(shape.getModelMatrix()));
-        initWindowView(shader);
+
+        // initWindowView(shader);
 
         while (!glfwWindowShouldClose(w.getWindow()))
         {
@@ -72,11 +78,24 @@ int main()
             glClearColor(0.78f, 0.96f, 0.94f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            mat4 model = mat4(1.0f);
+            model = translate(model, vec3(WIDTH / 2, HEIGHT / 2 - 100, 0));
+            model = scale(model, vec3(WIDTH - 100, HEIGHT - 100, 1));
+            shader.use();
 
+            mat4 view = translate(view, vec3(0.0f, 0.0f, -3));
+            mat4 projection = ortho(0.0f, (float)WIDTH, 0.0f, float(WIDTH));
 
-            glBindVertexArray(shape.getVertexArrayObject());
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, shape.getTriangleNum());
-            glBindVertexArray(0);
+            GLuint viewLoc = glGetUniformLocation(shader.getId(), "view");
+            GLuint modelLoc = glGetUniformLocation(shader.getId(), "model");
+            GLuint projLoc = glGetUniformLocation(shader.getId(), "projection");
+
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+            glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
+
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
             // swap buffers and poll IO events
             glfwSwapBuffers(w.getWindow());
