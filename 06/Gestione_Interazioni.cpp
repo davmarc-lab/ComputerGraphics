@@ -27,17 +27,12 @@ void myKeyboard(unsigned char key, int x, int y)
 			dx_t += 1;
 			break;
 
-		case 'R':
+		case 'q':
 			angolo += 0.1;
 			break;
-		case 'r':
+		case 'e':
 			angolo -= 0.1;
 			break;
-
-		case 't':
-			angolo += 0.1;
-			break;
-
 		case 'b':
 			drawBB = true;
 			break;

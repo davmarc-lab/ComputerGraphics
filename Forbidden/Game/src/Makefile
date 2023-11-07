@@ -1,7 +1,7 @@
 FLAGS = 
-LIBS = -Linclude/src/glad.o -lglfw -lGLU -lGL -lX11 -lXrandr -lpthread -lXi
+LIBS = -lglfw -lGLU -lGL -lX11 -lXrandr -lpthread -lXi -ldl
 
-glad = ./include/src/glad.o
+glad = ./include/src/glad.c
 gladh = ./include/glad/glad.h
 win = ./Window/Window.cpp
 winh = ./Window/Window.hpp
@@ -17,8 +17,8 @@ libh = Lib.hpp
 
 all: main.exe
 
-main.exe: main.o window.o shape.o shader.o scene.o rect.o
-	g++ ${FLAGS} -o main.exe main.o window.o rect.o shape.o shader.o scene.o ${glad} ${LIBS}
+main.exe: main.o window.o shape.o shader.o scene.o rect.o glad.o
+	g++ ${FLAGS} -o main.exe main.o window.o rect.o shape.o glad.o shader.o scene.o ${LIBS}
 
 main.o: main.cpp ${gladh} ${libh}
 	gcc -c ${FLAGS} main.cpp -o main.o
@@ -37,6 +37,9 @@ scene.o: ${scene} ${sceneh} ${libh} ${gladh}
 
 rect.o: ${rect} ${recth} ${libh} ${gladh}
 	gcc -c ${FLAGS} ${rect} -o rect.o
+
+glad.o: ${glad} ${gladh}
+	gcc -c ${FLAGS} ${glad} -o glad.o
 
 .PHONY:	clean
 
