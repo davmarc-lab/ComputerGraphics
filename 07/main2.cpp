@@ -88,15 +88,20 @@ void drawScene(void)
 
 	glUseProgram(programId);
 
-	glUniformMatrix4fv(MatrixProj, 1, GL_FALSE, value_ptr(Projection));
 
 
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	   
+	//Imposto la matrice di proiezione per la scena da diegnare
+	Projection = perspective(radians(SetupProspettiva.fov), SetupProspettiva.aspect, SetupProspettiva.near_plane, SetupProspettiva.far_plane);
+	glUniformMatrix4fv(MatrixProj, 1, GL_FALSE, value_ptr(Projection));
 	//Costruisco la matrice di Vista che applicata ai vertici in coordinate del mondo li trasforma nel sistema di riferimento della camera.
+
+	const float radius = 50.0f;
+	 
+	 
 	View = lookAt(vec3(SetupTelecamera.position), vec3(SetupTelecamera.target), vec3(SetupTelecamera.upVector));
 
 	//Passo al Vertex Shader il puntatore alla matrice View, che sarà associata alla variabile Uniform mat4 Projection
@@ -106,13 +111,7 @@ void drawScene(void)
 	glPointSize(10.0);
 	for (int k = 0; k < Scena.size(); k++)
 	{
-		//Trasformazione delle coordinate dell'ancora dal sistema di riferimento dell'oggetto in sistema
-		//di riferimento del mondo premoltiplicando per la matrice di Modellazione.
-
-		Scena[k].ancora_world = Scena[k].ancora_obj;
-		Scena[k].ancora_world = Scena[k].Model * Scena[k].ancora_world;
-		//Passo al Vertex Shader il puntatore alla matrice Model dell'oggetto k-esimo della Scena, che sarà associata alla variabile Uniform mat4 Projection
-		//all'interno del Vertex shader. Uso l'identificatio MatModel
+		 
 
 		glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(Scena[k].Model));
 		glBindVertexArray(Scena[k].VAO);
@@ -155,7 +154,12 @@ void drawScene(void)
 
 
 
+void update(int value)
+{
+	glutTimerFunc(300, update, 0);
 
+	glutPostRedisplay();
+}
 
 int main(int argc, char* argv[])
 {
@@ -178,6 +182,7 @@ int main(int argc, char* argv[])
 	glutKeyboardFunc(keyboardPressedEvent);
 	glutKeyboardUpFunc(keyboardReleasedEvent);
 	//glutPassiveMotionFunc(my_passive_mouse);
+	glutMouseWheelFunc(mouseWheelCallback);
 	glewExperimental = GL_TRUE;
 
 	//Inizializzazioni
@@ -190,6 +195,7 @@ int main(int argc, char* argv[])
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_ALPHA_TEST);
+	glutTimerFunc(300, update, 0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 

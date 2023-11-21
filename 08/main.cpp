@@ -12,7 +12,7 @@
 #include FT_FREETYPE_H
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 //Inizializzazione Booleano per la visualizzazione dell'ancora
-bool visualizzaAncora = false;
+bool visualizzaAncora =false;
 
 //Impostazione larghezza ed altezza della finestra sullo schermo
 int width = 1024;
