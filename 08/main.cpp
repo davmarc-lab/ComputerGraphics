@@ -32,17 +32,17 @@ unsigned int VAO_Text, VBO_Text;
 float raggio_sfera=2.5; //Raggio sfera che circonda gli oggetti per facilitare la selezione
 vec3 asse = vec3(0.0, 1.0, 0.0);
 int selected_obj = 0;  //Specifica la posizione dell'oggetto di Scena selezionato
- 
+
 float cameraSpeed = 0.1;
 
 vector<Mesh> Scena;
- vector<vec3> centri;
- vector<float> raggi;
+vector<vec3> centri;
+vector<float> raggi;
 
- //Definzione SetupTelecamera e SetupProspettiva
+//Definzione SetupTelecamera e SetupProspettiva
 
- ViewSetup SetupTelecamera;
- PerspectiveSetup SetupProspettiva;
+ViewSetup SetupTelecamera;
+PerspectiveSetup SetupProspettiva;
 
 //Varibili per la gestione della direzione della telecamera tramite mouse
 bool firstMouse = true;
@@ -56,100 +56,100 @@ mat4 Projection, Model, View;
 
 void resize(int w, int h)
 {
-	//Imposto la matrice di Proiezione per il rendering del testo
+    //Imposto la matrice di Proiezione per il rendering del testo
 
-	Projection_text = ortho(0.0f, (float)width, 0.0f, (float)height);
+    Projection_text = ortho(0.0f, (float)width, 0.0f, (float)height);
 
-	//Imposto la matrice di proiezione per la scena da diegnare
-	Projection = perspective(radians(SetupProspettiva.fov),SetupProspettiva.aspect, SetupProspettiva.near_plane, SetupProspettiva.far_plane);
+    //Imposto la matrice di proiezione per la scena da diegnare
+    Projection = perspective(radians(SetupProspettiva.fov),SetupProspettiva.aspect, SetupProspettiva.near_plane, SetupProspettiva.far_plane);
 
-	float AspectRatio_mondo = (float)(width) / (float)(height); //Rapporto larghezza altezza di tutto ciò che è nel mondo
-	 //Se l'aspect ratio del mondo è diversa da quella della finestra devo mappare in modo diverso 
-	 //per evitare distorsioni del disegno
-	if (AspectRatio_mondo > w / h)   //Se ridimensioniamo la larghezza della Viewport
-	{
-		glViewport(0, 0, w, w / AspectRatio_mondo);
-		w_up = (float)w;
-		h_up = w / AspectRatio_mondo;
-	}
-	else {  //Se ridimensioniamo la larghezza della viewport oppure se l'aspect ratio tra la finestra del mondo 
-			//e la finestra sullo schermo sono uguali
-		glViewport(0, 0, h * AspectRatio_mondo, h);
-		w_up = h * AspectRatio_mondo;
-		h_up = (float)h;
-	}
+    float AspectRatio_mondo = (float)(width) / (float)(height); //Rapporto larghezza altezza di tutto ciò che è nel mondo
+                                                                //Se l'aspect ratio del mondo è diversa da quella della finestra devo mappare in modo diverso 
+                                                                //per evitare distorsioni del disegno
+    if (AspectRatio_mondo > w / h)   //Se ridimensioniamo la larghezza della Viewport
+    {
+        glViewport(0, 0, w, w / AspectRatio_mondo);
+        w_up = (float)w;
+        h_up = w / AspectRatio_mondo;
+    }
+    else {  //Se ridimensioniamo la larghezza della viewport oppure se l'aspect ratio tra la finestra del mondo 
+            //e la finestra sullo schermo sono uguali
+        glViewport(0, 0, h * AspectRatio_mondo, h);
+        w_up = h * AspectRatio_mondo;
+        h_up = (float)h;
+    }
 }
 
 
 
 void drawScene(void)
 {
-	//Utilizzo il program shader per il disegno
+    //Utilizzo il program shader per il disegno
 
-	glUseProgram(programId);
+    glUseProgram(programId);
 
-	glUniformMatrix4fv(MatrixProj, 1, GL_FALSE, value_ptr(Projection));
-
-
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	   
-	//Costruisco la matrice di Vista che applicata ai vertici in coordinate del mondo li trasforma nel sistema di riferimento della camera.
-	View = lookAt(vec3(SetupTelecamera.position), vec3(SetupTelecamera.target), vec3(SetupTelecamera.upVector));
-
-	//Passo al Vertex Shader il puntatore alla matrice View, che sarà associata alla variabile Uniform mat4 Projection
-   //all'interno del Vertex shader. Uso l'identificatio MatView
-	
-	glUniformMatrix4fv(MatView, 1, GL_FALSE, value_ptr(View));
-	glPointSize(10.0);
-	for (int k = 0; k < Scena.size(); k++)
-	{
-		//Trasformazione delle coordinate dell'ancora dal sistema di riferimento dell'oggetto in sistema
-		//di riferimento del mondo premoltiplicando per la matrice di Modellazione.
-
-		Scena[k].ancora_world = Scena[k].ancora_obj;
-		Scena[k].ancora_world = Scena[k].Model * Scena[k].ancora_world;
-		//Passo al Vertex Shader il puntatore alla matrice Model dell'oggetto k-esimo della Scena, che sarà associata alla variabile Uniform mat4 Projection
-		//all'interno del Vertex shader. Uso l'identificatio MatModel
-
-		glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(Scena[k].Model));
-		glBindVertexArray(Scena[k].VAO);
-		
-	 	if (visualizzaAncora==true)
-		{
-			//Visualizzo l'ancora dell'oggetto
-			int ind = Scena[k].indici.size() - 1;
-
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glDrawElements(GL_POINTS, 1, GL_UNSIGNED_INT, BUFFER_OFFSET(ind * sizeof(GLuint)));
-		}
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDrawElements(GL_TRIANGLES, (Scena[k].indici.size() - 1) * sizeof(GLuint), GL_UNSIGNED_INT, 0);
-
-	 
-		glBindVertexArray(0);
-
-	}
+    glUniformMatrix4fv(MatrixProj, 1, GL_FALSE, value_ptr(Projection));
 
 
-	//Imposto il renderizzatore del testo
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    //Costruisco la matrice di Vista che applicata ai vertici in coordinate del mondo li trasforma nel sistema di riferimento della camera.
+    View = lookAt(vec3(SetupTelecamera.position), vec3(SetupTelecamera.target), vec3(SetupTelecamera.upVector));
+
+    //Passo al Vertex Shader il puntatore alla matrice View, che sarà associata alla variabile Uniform mat4 Projection
+    //all'interno del Vertex shader. Uso l'identificatio MatView
+
+    glUniformMatrix4fv(MatView, 1, GL_FALSE, value_ptr(View));
+    glPointSize(10.0);
+    for (int k = 0; k < Scena.size(); k++)
+    {
+        //Trasformazione delle coordinate dell'ancora dal sistema di riferimento dell'oggetto in sistema
+        //di riferimento del mondo premoltiplicando per la matrice di Modellazione.
+
+        Scena[k].ancora_world = Scena[k].ancora_obj;
+        Scena[k].ancora_world = Scena[k].Model * Scena[k].ancora_world;
+        //Passo al Vertex Shader il puntatore alla matrice Model dell'oggetto k-esimo della Scena, che sarà associata alla variabile Uniform mat4 Projection
+        //all'interno del Vertex shader. Uso l'identificatio MatModel
+
+        glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(Scena[k].Model));
+        glBindVertexArray(Scena[k].VAO);
+
+        if (visualizzaAncora==true)
+        {
+            //Visualizzo l'ancora dell'oggetto
+            int ind = Scena[k].indici.size() - 1;
+
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glDrawElements(GL_POINTS, 1, GL_UNSIGNED_INT, BUFFER_OFFSET(ind * sizeof(GLuint)));
+        }
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glDrawElements(GL_TRIANGLES, (Scena[k].indici.size() - 1) * sizeof(GLuint), GL_UNSIGNED_INT, 0);
+
+
+        glBindVertexArray(0);
+
+    }
+
+
+    //Imposto il renderizzatore del testo
 
 
 
-	RenderText(programId_text, Projection_text, Operazione, VAO_Text, VBO_Text, 10.0f, 650.0f, 0.5f, glm::vec3(1.0, 0.0f, 0.2f));
+    RenderText(programId_text, Projection_text, Operazione, VAO_Text, VBO_Text, 10.0f, 650.0f, 0.5f, glm::vec3(1.0, 0.0f, 0.2f));
 
-	RenderText(programId_text, Projection_text, stringa_asse, VAO_Text, VBO_Text, 10.0f, 700.0f, 0.5f, glm::vec3(1.0, 0.0f, 0.2f));
-
-
-	RenderText(programId_text, Projection_text, "Oggetto selezionato", VAO_Text, VBO_Text, 10.0f, 600.0f, 0.5f, glm::vec3(1.0, 0.0f, 0.2f));
-
-	if (selected_obj > -1)
-		RenderText(programId_text, Projection_text, Scena[selected_obj].nome.c_str(), VAO_Text, VBO_Text, 10.0f, 550.0f, 0.5f, glm::vec3(1.0, 0.0f, 0.2f));
+    RenderText(programId_text, Projection_text, stringa_asse, VAO_Text, VBO_Text, 10.0f, 700.0f, 0.5f, glm::vec3(1.0, 0.0f, 0.2f));
 
 
-	glutSwapBuffers();
+    RenderText(programId_text, Projection_text, "Oggetto selezionato", VAO_Text, VBO_Text, 10.0f, 600.0f, 0.5f, glm::vec3(1.0, 0.0f, 0.2f));
+
+    if (selected_obj > -1)
+        RenderText(programId_text, Projection_text, Scena[selected_obj].nome.c_str(), VAO_Text, VBO_Text, 10.0f, 550.0f, 0.5f, glm::vec3(1.0, 0.0f, 0.2f));
+
+
+    glutSwapBuffers();
 
 }
 
@@ -159,51 +159,51 @@ void drawScene(void)
 
 int main(int argc, char* argv[])
 {
-	glutInit(&argc, argv);
+    glutInit(&argc, argv);
 
-	glutInitContextVersion(4, 0);
-	glutInitContextProfile(GLUT_CORE_PROFILE);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-
-
-	//Inizializzo finestra per il rendering della scena 3d con tutti i suoi eventi le sue inizializzazioni e le sue impostazioni
-
-	glutInitWindowSize(width, height);
-	glutInitWindowPosition(100, 100);
-	glutCreateWindow("Scena 3D");
-	glutDisplayFunc(drawScene);
-	glutReshapeFunc(resize);
-	
-	glutMouseFunc(mouse);
-	glutKeyboardFunc(keyboardPressedEvent);
-	glutKeyboardUpFunc(keyboardReleasedEvent);
-	//glutPassiveMotionFunc(my_passive_mouse);
-	glewExperimental = GL_TRUE;
-
-	//Inizializzazioni
-	glewInit();
-	INIT_SHADER();
-	INIT_VAO();
-	INIT_CAMERA_PROJECTION();
-	INIT_VAO_Text();
-	Init_Freetype();
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glEnable(GL_ALPHA_TEST);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glutInitContextVersion(4, 0);
+    glutInitContextProfile(GLUT_CORE_PROFILE);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
 
-	
-	//Chiedo che mi venga restituito l'identificativo della variabile uniform mat4 Projection (in vertex shader).
-	//QUesto identificativo sarà poi utilizzato per il trasferimento della matrice Projection al Vertex Shader
-	MatrixProj = glGetUniformLocation(programId, "Projection");
-	//Chiedo che mi venga restituito l'identificativo della variabile uniform mat4 Model (in vertex shader)
-	//QUesto identificativo sarà poi utilizzato per il trasferimento della matrice Model al Vertex Shader
-	MatModel = glGetUniformLocation(programId, "Model");
-	//Chiedo che mi venga restituito l'identificativo della variabile uniform mat4 View (in vertex shader)
-	//QUesto identificativo sarà poi utilizzato per il trasferimento della matrice View al Vertex Shader
-	MatView = glGetUniformLocation(programId, "View");
+    //Inizializzo finestra per il rendering della scena 3d con tutti i suoi eventi le sue inizializzazioni e le sue impostazioni
 
-	glutMainLoop();
+    glutInitWindowSize(width, height);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Scena 3D");
+    glutDisplayFunc(drawScene);
+    glutReshapeFunc(resize);
+
+    glutMouseFunc(mouse);
+    glutKeyboardFunc(keyboardPressedEvent);
+    glutKeyboardUpFunc(keyboardReleasedEvent);
+    //glutPassiveMotionFunc(my_passive_mouse);
+    glewExperimental = GL_TRUE;
+
+    //Inizializzazioni
+    glewInit();
+    INIT_SHADER();
+    INIT_VAO();
+    INIT_CAMERA_PROJECTION();
+    INIT_VAO_Text();
+    Init_Freetype();
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glEnable(GL_ALPHA_TEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+
+    //Chiedo che mi venga restituito l'identificativo della variabile uniform mat4 Projection (in vertex shader).
+    //QUesto identificativo sarà poi utilizzato per il trasferimento della matrice Projection al Vertex Shader
+    MatrixProj = glGetUniformLocation(programId, "Projection");
+    //Chiedo che mi venga restituito l'identificativo della variabile uniform mat4 Model (in vertex shader)
+    //QUesto identificativo sarà poi utilizzato per il trasferimento della matrice Model al Vertex Shader
+    MatModel = glGetUniformLocation(programId, "Model");
+    //Chiedo che mi venga restituito l'identificativo della variabile uniform mat4 View (in vertex shader)
+    //QUesto identificativo sarà poi utilizzato per il trasferimento della matrice View al Vertex Shader
+    MatView = glGetUniformLocation(programId, "View");
+
+    glutMainLoop();
 }
 

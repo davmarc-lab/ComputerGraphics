@@ -4,6 +4,10 @@
 #include "Gestione_VAO.h"
 #include "GestioneTelecamera.h"
 #include "enum.h"
+#include <cmath>
+#include <glm/ext/quaternion_common.hpp>
+#include <glm/ext/quaternion_geometric.hpp>
+#include <glm/matrix.hpp>
 extern bool visualizzaAncora;
 extern int cont_cubi,cont_pir;
 extern vector<Mesh> Scena;
@@ -199,9 +203,18 @@ void keyboardReleasedEvent(unsigned char key, int x, int y)
 
 vec3 get_ray_from_mouse(float mouse_x, float mouse_y) {
 
-	 //TO DO 
+    vec3 ndc = vec3(2 * (mouse_x / width) - 1, 1 - 2 * (mouse_y / height), -1);
 
-	return vec3(1.0,1.0,1.0);
+    vec4 pclip = vec4(ndc, 1.0);
+    vec4 viewModelClip = inverse(Projection) * pclip;
+
+    viewModelClip.w = 1;
+
+    vec4 pw = inverse(View) * viewModelClip;
+
+    /* vec3 ray_wor = normalize(vec3(pw) - vec3(SetupTelecamera.position)); */
+
+	return normalize(vec3(pw) - vec3(SetupTelecamera.position));
 }
 
 /*controlla se un raggio interseca una sfera. In caso negativo, restituisce false. Rigetta
@@ -210,9 +223,14 @@ le intersezioni dietro l'origine del raggio, e pone  intersection_distance all'i
 
 bool ray_sphere(vec3 ray_origin_wor, vec3 ray_direction_wor, vec3 sphere_centre_wor, float sphere_radius, float* intersection_distance) {
 
-	 //TO DO
+    auto b = dot(ray_direction_wor, (ray_origin_wor - sphere_centre_wor));
+    auto q = dot((ray_origin_wor - sphere_centre_wor), (ray_origin_wor - sphere_centre_wor)) - pow(sphere_radius, 2.0);
 
-	return false;
+    float delta = pow(b, 2.0) - q;
+
+    *intersection_distance = -(float)b - sqrt(delta);
+
+	return delta < 0 ? false : true;
 }
 
 void mouse(int button, int state, int x, int y)
