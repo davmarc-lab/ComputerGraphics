@@ -1,13 +1,18 @@
 //Gestione eventi tastiera per il movimento della telecamera
 #include "Lib.h"
+#include "Strutture.h"
 #include "geometria.h"
 #include "Gestione_VAO.h"
 #include "GestioneTelecamera.h"
 #include "enum.h"
 #include <cmath>
+#include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/quaternion_common.hpp>
 #include <glm/ext/quaternion_geometric.hpp>
+#include <glm/gtx/transform.hpp>
 #include <glm/matrix.hpp>
+#include <iostream>
+
 extern bool visualizzaAncora;
 extern int cont_cubi,cont_pir;
 extern vector<Mesh> Scena;
@@ -16,11 +21,12 @@ extern vec3 asse;
 extern mat4 Projection, View;
 extern ViewSetup SetupTelecamera;
 
-extern Mesh  Cubo, Piramide, Piano;
+extern Mesh Cubo, Piramide, Piano;
 extern int selected_obj;
 extern int height, width;
 extern float raggio_sfera;
-extern PerspectiveSetup SetupProspettiva;
+extern PerspectiveSetup SetupProspettiva; 
+
 
 void modifyModelMatrix(vec3 translation_vector, vec3 rotation_vector, GLfloat angle, GLfloat scale_factor)
 {
@@ -61,6 +67,7 @@ void keyboardPressedEvent(unsigned char key, int x, int y)
 {
 	char* intStr;
 	string str;
+    Mesh cube, pir;
 	switch (key)
 	{
 
@@ -72,7 +79,6 @@ void keyboardPressedEvent(unsigned char key, int x, int y)
 		moveCameraRight();
 		break;
 
-
 	case 'w':
 		moveCameraForward();
 		break;
@@ -81,56 +87,69 @@ void keyboardPressedEvent(unsigned char key, int x, int y)
 		moveCameraBack();
 		break;
 
-	 
-
 	case 'v':  //Visualizzazione ancora
 		visualizzaAncora = true;
+        break;
+
 	case 'C':  //Si inserisce un cubo  
-		 
+        crea_cubo(&cube);		 
+        crea_VAO_Vector(&cube);
 		cont_cubi += 1;
 		str = std::to_string(cont_cubi);
+        cube.nome = "Cubo" + str;
 
-		Cubo.nome = "Cubo" + str;
-		 
+        cube.Model = glm::mat4(1.0f);
+        cube.Model = translate(cube.Model, vec3(-3.5, 2, 2.5));
+        cube.Model = scale(cube.Model, vec3(2.0, 2.0, 2.0));
+        Scena.push_back(cube);
 		break;
+
 	case 'P':  //Si inserisce una piramide
-		 
+		crea_piramide(&pir);
+        crea_VAO_Vector(&pir);
 		cont_pir += 1;
 		str = std::to_string(cont_pir);
+        pir.nome = "Piramide" + str; 
 
-		Piramide.nome = "Piramide" + str;
-		 
+        pir.Model = mat4(1.0f);
+        pir.Model = translate(pir.Model, vec3(-3.5, -4, 2.5));
+        pir.Model = scale(pir.Model, vec3(2.0, 2.0, 2.0));
+        Scena.push_back(pir);
 		break;
+
 	case 'g':  //Si entra in modalità di operazione traslazione
 		OperationMode = TRASLATING;
 		Operazione = "TRASLAZIONE";
 		break;
+
 	case 'r': //Si entra in modalità di operazione rotazione
 		OperationMode = ROTATING;
 		Operazione = "ROTAZIONE";
 		break;
-	case 'S':
+
+    case 'S':
 		OperationMode = SCALING; //Si entra in modalità di operazione scalatura
 		Operazione = "SCALATURA";
 		break;
-	case 27:
+	
+    case 27:
 		glutLeaveMainLoop();
 		break;
-		// Selezione dell'asse
-	case 'x':
+
+        // Selezione dell'asse
+    case 'x':
 		WorkingAxis = X;  //Seleziona l'asse X come asse lungo cui effettuare l'operazione selezionata (tra traslazione, rotazione, scalatura)
 		stringa_asse = " Asse X";
 		break;
-	case 'y':
+	
+    case 'y':
 		WorkingAxis = Y;  //Seleziona l'asse Y come asse lungo cui effettuare l'operazione selezionata (tra traslazione, rotazione, scalatura)
 		stringa_asse = " Asse Y";
 		break;
-	case 'z':
+	
+    case 'z':
 		WorkingAxis = Z;
 		stringa_asse = " Asse Z";  //Seleziona l'asse Z come asse lungo cui effettuare l'operazione selezionata (tra traslazione, rotazione, scalatura)
-		break;
-
-	default:
 		break;
 	}
 

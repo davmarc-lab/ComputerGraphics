@@ -29,7 +29,7 @@ mat4 Projection_text;
 
 unsigned int programId, programId_text, MatrixProj, MatrixProj_txt, MatModel, MatView;
 unsigned int VAO_Text, VBO_Text;
-float raggio_sfera=2.5; //Raggio sfera che circonda gli oggetti per facilitare la selezione
+float raggio_sfera=1.5; //Raggio sfera che circonda gli oggetti per facilitare la selezione
 vec3 asse = vec3(0.0, 1.0, 0.0);
 int selected_obj = 0;  //Specifica la posizione dell'oggetto di Scena selezionato
 
